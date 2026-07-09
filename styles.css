@@ -1,0 +1,772 @@
+:root {
+  --bg: #eef2f7;
+  --bg-card: #ffffff;
+  --bg-subtle: #f7f9fc;
+  --border: #e4eaf2;
+  --text: #1a2332;
+  --text-secondary: #5c6b82;
+  --text-muted: #8b9bb5;
+  --primary: #3b82f6;
+  --primary-soft: #eff6ff;
+  --primary-hover: #2563eb;
+  --timer-red: #e60000;
+  --timer-red-soft: rgba(230, 0, 0, 0.08);
+  --break-green: #22c55e;
+  --break-soft: rgba(34, 197, 94, 0.1);
+  --long-break-blue: #3b82f6;
+  --long-break-soft: rgba(59, 130, 246, 0.1);
+  --star: #f59e0b;
+  --danger: #ef4444;
+  --shadow-sm: 0 2px 8px rgba(26, 35, 50, 0.06);
+  --shadow-md: 0 8px 24px rgba(26, 35, 50, 0.08);
+  --shadow-timer: 0 12px 40px rgba(26, 35, 50, 0.12), 0 2px 8px rgba(26, 35, 50, 0.06);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --font: "Noto Sans KR", system-ui, sans-serif;
+  --font-display: "Outfit", "Noto Sans KR", sans-serif;
+  --transition: 0.2s ease;
+  --cat-work: #3b82f6;
+  --cat-study: #8b5cf6;
+  --cat-life: #22c55e;
+  --cat-personal: #f59e0b;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 2.5rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+.header-title {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.header-sub {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+/* Layout */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  flex: 1;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Timer Section */
+.timer-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+  background: var(--bg-subtle);
+  padding: 0.3rem;
+  border-radius: var(--radius-sm);
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 0.5rem 0.6rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.mode-tab:hover {
+  color: var(--text-secondary);
+}
+
+.mode-tab.active {
+  background: var(--bg-card);
+  color: var(--timer-red);
+  box-shadow: var(--shadow-sm);
+}
+
+body.mode-shortBreak .mode-tab.active {
+  color: var(--break-green);
+}
+
+body.mode-longBreak .mode-tab.active {
+  color: var(--long-break-blue);
+}
+
+/* Analog Timer */
+.analog-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.analog-frame {
+  position: relative;
+  width: min(100%, 300px);
+  aspect-ratio: 1;
+  background: #ffffff;
+  border-radius: 36px;
+  box-shadow: var(--shadow-timer);
+  border: 3px solid #f0f0f0;
+  padding: 14px;
+}
+
+.analog-dial {
+  width: 100%;
+  height: 100%;
+}
+
+.dial-face {
+  fill: #ffffff;
+  stroke: #ebebeb;
+  stroke-width: 1;
+}
+
+.dial-tick {
+  stroke: #1a1a1a;
+  stroke-linecap: round;
+}
+
+.dial-tick.major {
+  stroke-width: 2.5;
+}
+
+.dial-tick.minor {
+  stroke-width: 1;
+  stroke: #333;
+}
+
+.dial-tick.dot {
+  stroke-width: 0;
+  fill: #ccc;
+}
+
+.dial-number {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  fill: #111;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.time-wedge {
+  fill: var(--timer-red);
+  transition: d 0.5s linear;
+}
+
+body.mode-shortBreak .time-wedge {
+  fill: var(--break-green);
+}
+
+body.mode-longBreak .time-wedge {
+  fill: var(--long-break-blue);
+}
+
+.center-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 42%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border: 2px solid #e8e8e8;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+  font-family: inherit;
+  color: var(--text);
+}
+
+.center-knob:hover {
+  transform: translate(-50%, -50%) scale(1.03);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.12),
+    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+}
+
+.center-knob:active {
+  transform: translate(-50%, -50%) scale(0.98);
+}
+
+.center-knob.running {
+  border-color: var(--timer-red);
+  box-shadow:
+    0 0 0 4px var(--timer-red-soft),
+    0 4px 12px rgba(230, 0, 0, 0.15);
+}
+
+body.mode-shortBreak .center-knob.running {
+  border-color: var(--break-green);
+  box-shadow:
+    0 0 0 4px var(--break-soft),
+    0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+body.mode-longBreak .center-knob.running {
+  border-color: var(--long-break-blue);
+  box-shadow:
+    0 0 0 4px var(--long-break-soft),
+    0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.knob-time {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1;
+  color: #111;
+}
+
+.knob-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.knob-action {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--timer-red);
+  margin-top: 0.15rem;
+}
+
+body.mode-shortBreak .knob-action {
+  color: var(--break-green);
+}
+
+body.mode-longBreak .knob-action {
+  color: var(--long-break-blue);
+}
+
+.timer-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.session-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+}
+
+.reset-link {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition);
+}
+
+.reset-link:hover {
+  color: var(--text-secondary);
+}
+
+.current-task {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.current-task-icon {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.current-task.active .current-task-icon {
+  color: var(--timer-red);
+}
+
+.current-task-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.current-task-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.current-task.active .current-task-text {
+  color: var(--timer-red);
+}
+
+/* Todo Section — Todolize inspired */
+.todo-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+}
+
+.todo-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.todo-top-info h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.todo-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.progress-ring-mini {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.progress-ring-mini svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-mini-bg {
+  fill: none;
+  stroke: var(--bg-subtle);
+  stroke-width: 4;
+}
+
+.progress-mini-fill {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 113.1;
+  stroke-dashoffset: 113.1;
+  transition: stroke-dashoffset 0.4s ease;
+}
+
+.progress-mini-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.todo-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-tab {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: 20px;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.filter-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.filter-tab.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.todo-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.todo-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 0.85rem;
+  transition: border-color var(--transition);
+}
+
+.todo-input-wrap:focus-within {
+  border-color: var(--primary);
+  background: var(--bg-card);
+}
+
+.input-plus {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 0.7rem 0;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.9rem;
+}
+
+.todo-input::placeholder {
+  color: var(--text-muted);
+}
+
+.todo-input:focus {
+  outline: none;
+}
+
+.btn-add {
+  padding: 0 1.1rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-add:hover {
+  background: var(--primary-hover);
+}
+
+.todo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 340px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.todo-list:empty::after {
+  content: "할 일이 없습니다 ✨";
+  display: block;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  padding: 2.5rem 1rem;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.8rem 0.85rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--cat-work);
+  transition: all var(--transition);
+  animation: slideIn 0.25s ease;
+}
+
+.todo-item[data-category="study"] { border-left-color: var(--cat-study); }
+.todo-item[data-category="life"] { border-left-color: var(--cat-life); }
+.todo-item[data-category="personal"] { border-left-color: var(--cat-personal); }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.todo-item:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: #d0dae8;
+}
+
+.todo-item.completed {
+  opacity: 0.6;
+  background: var(--bg-subtle);
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todo-item.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.todo-item.starred {
+  background: #fffbeb;
+}
+
+.todo-check {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-card);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.todo-check:hover {
+  border-color: var(--primary);
+}
+
+.todo-check.checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.todo-check.checked::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+.todo-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  word-break: break-word;
+  cursor: pointer;
+  display: block;
+}
+
+.todo-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.todo-category {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 6px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.todo-item[data-category="study"] .todo-category {
+  background: #f3e8ff;
+  color: var(--cat-study);
+}
+
+.todo-item[data-category="life"] .todo-category {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.todo-item[data-category="personal"] .todo-category {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.todo-pomodoros {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.todo-actions {
+  display: flex;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.todo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.95rem;
+}
+
+.todo-btn:hover {
+  background: var(--bg-subtle);
+}
+
+.todo-btn.star-btn.active {
+  color: var(--star);
+}
+
+.todo-btn.select-btn.active {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.todo-btn.delete-btn:hover {
+  color: var(--danger);
+  background: #fef2f2;
+}
+
+.todo-footer {
+  margin-top: 0.75rem;
+  text-align: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.btn-clear {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.btn-clear:hover {
+  color: var(--danger);
+}
+
+.footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.analog-frame.complete {
+  animation: timerPulse 0.5s ease 3;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}

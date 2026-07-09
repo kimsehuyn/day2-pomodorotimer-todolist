@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Flow — Pomodoro & Todo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-date" id="headerDate"></div>
+      <h1 class="header-title">Focus Flow</h1>
+      <p class="header-sub">집중하고, 완료하세요</p>
+    </header>
+
+    <main class="main">
+      <section class="timer-section" aria-label="포모도로 타이머">
+        <div class="mode-tabs" role="tablist">
+          <button class="mode-tab active" data-mode="work" role="tab" aria-selected="true">집중</button>
+          <button class="mode-tab" data-mode="shortBreak" role="tab" aria-selected="false">짧은 휴식</button>
+          <button class="mode-tab" data-mode="longBreak" role="tab" aria-selected="false">긴 휴식</button>
+        </div>
+
+        <div class="analog-timer" id="analogTimer">
+          <div class="analog-frame">
+            <svg class="analog-dial" viewBox="0 0 280 280" aria-hidden="true">
+              <circle class="dial-face" cx="140" cy="140" r="118" />
+              <g id="dialTicks"></g>
+              <g id="dialNumbers"></g>
+              <path class="time-wedge" id="timeWedge" />
+            </svg>
+
+            <button class="center-knob" id="startBtn" aria-label="타이머 시작">
+              <time class="knob-time" id="timerDisplay" datetime="PT25M">25:00</time>
+              <span class="knob-label" id="timerLabel">집중</span>
+              <span class="knob-action" id="startBtnText">시작</span>
+            </button>
+          </div>
+
+          <div class="timer-meta">
+            <span class="session-badge" id="sessionCount">세션 0 / 4</span>
+            <button class="reset-link" id="resetBtn" aria-label="타이머 초기화">초기화</button>
+          </div>
+        </div>
+
+        <div class="current-task" id="currentTask">
+          <span class="current-task-icon" aria-hidden="true">◎</span>
+          <div class="current-task-body">
+            <span class="current-task-label">현재 작업</span>
+            <span class="current-task-text" id="currentTaskText">할 일을 선택하세요</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="todo-section" aria-label="할 일 목록">
+        <div class="todo-top">
+          <div class="todo-top-info">
+            <h2>오늘의 할 일</h2>
+            <p class="todo-date" id="todoDate"></p>
+          </div>
+          <div class="progress-ring-mini" aria-hidden="true">
+            <svg viewBox="0 0 44 44">
+              <circle class="progress-mini-bg" cx="22" cy="22" r="18" />
+              <circle class="progress-mini-fill" id="progressMiniFill" cx="22" cy="22" r="18" />
+            </svg>
+            <span class="progress-mini-text" id="progressMiniText">0%</span>
+          </div>
+        </div>
+
+        <div class="todo-filters" role="tablist">
+          <button class="filter-tab active" data-filter="all" role="tab">전체</button>
+          <button class="filter-tab" data-filter="active" role="tab">진행중</button>
+          <button class="filter-tab" data-filter="completed" role="tab">완료</button>
+        </div>
+
+        <form class="todo-form" id="todoForm">
+          <div class="todo-input-wrap">
+            <span class="input-plus" aria-hidden="true">+</span>
+            <input
+              type="text"
+              id="todoInput"
+              class="todo-input"
+              placeholder="할 일을 추가하세요..."
+              autocomplete="off"
+              maxlength="120"
+              aria-label="새 할 일"
+            />
+          </div>
+          <button type="submit" class="btn-add" aria-label="할 일 추가">추가</button>
+        </form>
+
+        <ul class="todo-list" id="todoList" aria-live="polite"></ul>
+
+        <div class="todo-footer" id="todoFooter" hidden>
+          <button class="btn-clear" id="clearCompletedBtn">완료 항목 삭제</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>25분 집중 · 5분 휴식 · 4세션 후 15분 긴 휴식</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
