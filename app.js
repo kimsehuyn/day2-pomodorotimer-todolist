@@ -1,9 +1,3 @@
-const MODES = {
-  work: { duration: 25 * 60, label: "집중" },
-  shortBreak: { duration: 5 * 60, label: "휴식" },
-  longBreak: { duration: 15 * 60, label: "긴 휴식" },
-};
-
 const SESSIONS_BEFORE_LONG_BREAK = 4;
 const DIAL_CX = 140;
 const DIAL_CY = 140;
@@ -11,12 +5,116 @@ const DIAL_R = 118;
 const WEDGE_R = 108;
 const MINI_CIRCUMFERENCE = 2 * Math.PI * 18;
 
+const I18N = {
+  ko: {
+    tagline: "집중하고, 완료하세요",
+    focus: "집중",
+    shortBreak: "짧은 휴식",
+    longBreak: "긴 휴식",
+    breakLabel: "휴식",
+    start: "시작",
+    pause: "일시정지",
+    reset: "초기화",
+    session: "세션",
+    currentTask: "현재 작업",
+    selectTask: "할 일을 선택하세요",
+    todayTodos: "오늘의 할 일",
+    all: "전체",
+    active: "진행중",
+    completed: "완료",
+    addTodo: "할 일을 추가하세요...",
+    add: "추가",
+    clearCompleted: "완료 항목 삭제",
+    footer: "25분 집중 · 5분 휴식 · 4세션 후 15분 긴 휴식",
+    emptyTodos: "할 일이 없습니다 ✨",
+    catWork: "업무",
+    catStudy: "공부",
+    catLife: "생활",
+    catPersonal: "개인",
+    changeCategory: "카테고리 변경",
+    starTodo: "중요 표시",
+    selectAsCurrent: "현재 작업으로 선택",
+    deleteTodo: "삭제",
+    toggleComplete: "완료 토글",
+    timerSection: "포모도로 타이머",
+    todoSection: "할 일 목록",
+    startTimer: "타이머 시작",
+    resetTimer: "타이머 초기화",
+    newTodo: "새 할 일",
+    addTodoBtn: "할 일 추가",
+    switchLang: "Switch to English",
+    toggleTheme: "테마 전환",
+    themeToLight: "라이트 모드로 전환",
+    themeToDark: "다크 모드로 전환",
+  },
+  en: {
+    tagline: "Focus deeply, finish fully",
+    focus: "Focus",
+    shortBreak: "Short Break",
+    longBreak: "Long Break",
+    breakLabel: "Break",
+    start: "Start",
+    pause: "Pause",
+    reset: "Reset",
+    session: "Session",
+    currentTask: "Current task",
+    selectTask: "Select a task",
+    todayTodos: "Today's tasks",
+    all: "All",
+    active: "Active",
+    completed: "Done",
+    addTodo: "Add a new task...",
+    add: "Add",
+    clearCompleted: "Clear completed",
+    footer: "25m focus · 5m break · 15m long break after 4 sessions",
+    emptyTodos: "No tasks yet ✨",
+    catWork: "Work",
+    catStudy: "Study",
+    catLife: "Life",
+    catPersonal: "Personal",
+    changeCategory: "Change category",
+    starTodo: "Star task",
+    selectAsCurrent: "Select as current task",
+    deleteTodo: "Delete",
+    toggleComplete: "Toggle complete",
+    timerSection: "Pomodoro timer",
+    todoSection: "Todo list",
+    startTimer: "Start timer",
+    resetTimer: "Reset timer",
+    newTodo: "New task",
+    addTodoBtn: "Add task",
+    switchLang: "한국어로 전환",
+    toggleTheme: "Toggle theme",
+    themeToLight: "Switch to light mode",
+    themeToDark: "Switch to dark mode",
+  },
+};
+
+const MODE_KEYS = {
+  work: "focus",
+  shortBreak: "breakLabel",
+  longBreak: "longBreak",
+};
+
+const CATEGORY_KEYS = {
+  work: "catWork",
+  study: "catStudy",
+  life: "catLife",
+  personal: "catPersonal",
+};
+
 const CATEGORIES = [
-  { id: "work", label: "업무", color: "#3b82f6" },
-  { id: "study", label: "공부", color: "#8b5cf6" },
-  { id: "life", label: "생활", color: "#22c55e" },
-  { id: "personal", label: "개인", color: "#f59e0b" },
+  { id: "work", color: "#9aa8d4" },
+  { id: "study", color: "#c4a8d4" },
+  { id: "life", color: "#a8c9b5" },
+  { id: "personal", color: "#e8c4a0" },
 ];
+
+const MODES = {
+  work: { duration: 25 * 60 },
+  shortBreak: { duration: 5 * 60 },
+  longBreak: { duration: 15 * 60 },
+};
 
 const state = {
   mode: "work",
@@ -27,9 +125,12 @@ const state = {
   todos: [],
   filter: "all",
   intervalId: null,
+  lang: "ko",
+  theme: "light",
 };
 
 const els = {
+  html: document.documentElement,
   body: document.body,
   headerDate: document.getElementById("headerDate"),
   todoDate: document.getElementById("todoDate"),
@@ -54,16 +155,91 @@ const els = {
   progressMiniText: document.getElementById("progressMiniText"),
   dialTicks: document.getElementById("dialTicks"),
   dialNumbers: document.getElementById("dialNumbers"),
+  langBtn: document.getElementById("langBtn"),
+  langBtnText: document.getElementById("langBtnText"),
+  themeBtn: document.getElementById("themeBtn"),
+  themeBtnIcon: document.getElementById("themeBtnIcon"),
 };
+
+function t(key) {
+  return I18N[state.lang][key] ?? I18N.ko[key] ?? key;
+}
+
+function localeTag() {
+  return state.lang === "en" ? "en-US" : "ko-KR";
+}
+
+function loadPrefs() {
+  const savedLang = localStorage.getItem("focusflow-lang");
+  state.lang = savedLang === "en" ? "en" : "ko";
+
+  const savedTheme = localStorage.getItem("focusflow-theme");
+  if (savedTheme === "light" || savedTheme === "dark") {
+    state.theme = savedTheme;
+  } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    state.theme = "dark";
+  } else {
+    state.theme = "light";
+  }
+}
+
+function applyTheme() {
+  els.html.dataset.theme = state.theme;
+  localStorage.setItem("focusflow-theme", state.theme);
+  els.themeBtnIcon.textContent = state.theme === "dark" ? "☀️" : "🌙";
+  els.themeBtn.setAttribute(
+    "aria-label",
+    state.theme === "dark" ? t("themeToLight") : t("themeToDark")
+  );
+}
+
+function toggleTheme() {
+  state.theme = state.theme === "dark" ? "light" : "dark";
+  applyTheme();
+}
+
+function applyLanguage() {
+  els.html.lang = state.lang;
+  localStorage.setItem("focusflow-lang", state.lang);
+
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    el.textContent = t(el.dataset.i18n);
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+
+  document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+    el.setAttribute("aria-label", t(el.dataset.i18nAria));
+  });
+
+  els.todoList.dataset.empty = t("emptyTodos");
+  els.langBtnText.textContent = state.lang === "ko" ? "EN" : "KO";
+  els.langBtn.setAttribute("aria-label", t("switchLang"));
+  els.themeBtn.setAttribute(
+    "aria-label",
+    state.theme === "dark" ? t("themeToLight") : t("themeToDark")
+  );
+
+  updateDates();
+  updateTimerUI();
+  renderTodos();
+}
+
+function toggleLanguage() {
+  state.lang = state.lang === "ko" ? "en" : "ko";
+  applyLanguage();
+}
 
 function loadTodos() {
   try {
     const saved = localStorage.getItem("focusflow-todos");
     if (saved) {
-      state.todos = JSON.parse(saved).map((t) => ({
+      state.todos = JSON.parse(saved).map((item) => ({
         starred: false,
         category: "work",
-        ...t,
+        ...item,
       }));
     }
   } catch {
@@ -71,7 +247,7 @@ function loadTodos() {
   }
 
   const savedSelected = localStorage.getItem("focusflow-selected");
-  if (savedSelected && state.todos.some((t) => t.id === savedSelected)) {
+  if (savedSelected && state.todos.some((item) => item.id === savedSelected)) {
     state.selectedTodoId = savedSelected;
   }
 }
@@ -96,11 +272,20 @@ function formatTime(seconds) {
 }
 
 function formatDate(date) {
-  return date.toLocaleDateString("ko-KR", {
+  return date.toLocaleDateString(localeTag(), {
     year: "numeric",
     month: "long",
     day: "numeric",
     weekday: "long",
+  });
+}
+
+function updateDates() {
+  const today = new Date();
+  els.headerDate.textContent = formatDate(today);
+  els.todoDate.textContent = today.toLocaleDateString(localeTag(), {
+    month: "long",
+    day: "numeric",
   });
 }
 
@@ -160,30 +345,30 @@ function updateWedge() {
 function updateTimerUI() {
   els.timerDisplay.textContent = formatTime(state.timeLeft);
   els.timerDisplay.setAttribute("datetime", `PT${state.timeLeft}S`);
-  els.timerLabel.textContent = MODES[state.mode].label;
-  els.sessionCount.textContent = `세션 ${state.sessionsCompleted} / ${SESSIONS_BEFORE_LONG_BREAK}`;
+  els.timerLabel.textContent = t(MODE_KEYS[state.mode]);
+  els.sessionCount.textContent = `${t("session")} ${state.sessionsCompleted} / ${SESSIONS_BEFORE_LONG_BREAK}`;
   updateWedge();
 
   els.body.className = `mode-${state.mode}`;
 
   if (state.isRunning) {
     els.startBtn.classList.add("running");
-    els.startBtnText.textContent = "일시정지";
+    els.startBtnText.textContent = t("pause");
   } else {
     els.startBtn.classList.remove("running");
-    els.startBtnText.textContent = "시작";
+    els.startBtnText.textContent = t("start");
   }
 
   updateCurrentTaskDisplay();
 }
 
 function updateCurrentTaskDisplay() {
-  const selected = state.todos.find((t) => t.id === state.selectedTodoId);
+  const selected = state.todos.find((item) => item.id === state.selectedTodoId);
   if (selected && !selected.completed) {
     els.currentTaskText.textContent = selected.text;
     els.currentTask.classList.add("active");
   } else {
-    els.currentTaskText.textContent = "할 일을 선택하세요";
+    els.currentTaskText.textContent = t("selectTask");
     els.currentTask.classList.remove("active");
     if (selected?.completed) state.selectedTodoId = null;
   }
@@ -191,7 +376,7 @@ function updateCurrentTaskDisplay() {
 
 function updateProgressMini() {
   const total = state.todos.length;
-  const done = state.todos.filter((t) => t.completed).length;
+  const done = state.todos.filter((item) => item.completed).length;
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const offset = MINI_CIRCUMFERENCE * (1 - pct / 100);
 
@@ -274,7 +459,7 @@ function onTimerComplete() {
 
   if (state.mode === "work") {
     if (state.selectedTodoId) {
-      const todo = state.todos.find((t) => t.id === state.selectedTodoId);
+      const todo = state.todos.find((item) => item.id === state.selectedTodoId);
       if (todo) {
         todo.pomodoros = (todo.pomodoros || 0) + 1;
         saveTodos();
@@ -298,11 +483,11 @@ function onTimerComplete() {
 }
 
 function getCategoryLabel(id) {
-  return CATEGORIES.find((c) => c.id === id)?.label || "업무";
+  return t(CATEGORY_KEYS[id] || "catWork");
 }
 
 function cycleCategory(id) {
-  const todo = state.todos.find((t) => t.id === id);
+  const todo = state.todos.find((item) => item.id === id);
   if (!todo) return;
   const idx = CATEGORIES.findIndex((c) => c.id === (todo.category || "work"));
   todo.category = CATEGORIES[(idx + 1) % CATEGORIES.length].id;
@@ -329,7 +514,7 @@ function addTodo(text) {
 }
 
 function toggleTodo(id) {
-  const todo = state.todos.find((t) => t.id === id);
+  const todo = state.todos.find((item) => item.id === id);
   if (!todo) return;
 
   todo.completed = !todo.completed;
@@ -343,7 +528,7 @@ function toggleTodo(id) {
 }
 
 function toggleStar(id) {
-  const todo = state.todos.find((t) => t.id === id);
+  const todo = state.todos.find((item) => item.id === id);
   if (!todo) return;
   todo.starred = !todo.starred;
   saveTodos();
@@ -351,7 +536,7 @@ function toggleStar(id) {
 }
 
 function deleteTodo(id) {
-  state.todos = state.todos.filter((t) => t.id !== id);
+  state.todos = state.todos.filter((item) => item.id !== id);
   if (state.selectedTodoId === id) state.selectedTodoId = null;
   saveTodos();
   renderTodos();
@@ -359,7 +544,7 @@ function deleteTodo(id) {
 }
 
 function selectTodo(id) {
-  const todo = state.todos.find((t) => t.id === id);
+  const todo = state.todos.find((item) => item.id === id);
   if (!todo || todo.completed) return;
 
   state.selectedTodoId = state.selectedTodoId === id ? null : id;
@@ -369,20 +554,21 @@ function selectTodo(id) {
 }
 
 function clearCompleted() {
-  state.todos = state.todos.filter((t) => !t.completed);
+  state.todos = state.todos.filter((item) => !item.completed);
   saveTodos();
   renderTodos();
 }
 
 function getFilteredTodos() {
-  if (state.filter === "active") return state.todos.filter((t) => !t.completed);
-  if (state.filter === "completed") return state.todos.filter((t) => t.completed);
+  if (state.filter === "active") return state.todos.filter((item) => !item.completed);
+  if (state.filter === "completed") return state.todos.filter((item) => item.completed);
   return state.todos;
 }
 
 function renderTodos() {
   const filtered = getFilteredTodos();
   els.todoList.innerHTML = "";
+  els.todoList.dataset.empty = t("emptyTodos");
 
   filtered.forEach((todo) => {
     const li = document.createElement("li");
@@ -394,7 +580,7 @@ function renderTodos() {
 
     const check = document.createElement("button");
     check.className = `todo-check${todo.completed ? " checked" : ""}`;
-    check.setAttribute("aria-label", `${todo.text} 완료 토글`);
+    check.setAttribute("aria-label", `${todo.text} ${t("toggleComplete")}`);
     check.addEventListener("click", () => toggleTodo(todo.id));
 
     const content = document.createElement("div");
@@ -413,7 +599,7 @@ function renderTodos() {
     const category = document.createElement("button");
     category.className = "todo-category";
     category.textContent = getCategoryLabel(todo.category);
-    category.title = "카테고리 변경";
+    category.title = t("changeCategory");
     category.addEventListener("click", (e) => {
       e.stopPropagation();
       cycleCategory(todo.id);
@@ -431,14 +617,14 @@ function renderTodos() {
 
     const starBtn = document.createElement("button");
     starBtn.className = `todo-btn star-btn${todo.starred ? " active" : ""}`;
-    starBtn.setAttribute("aria-label", "중요 표시");
+    starBtn.setAttribute("aria-label", t("starTodo"));
     starBtn.textContent = todo.starred ? "★" : "☆";
     starBtn.addEventListener("click", () => toggleStar(todo.id));
 
     if (!todo.completed) {
       const selectBtn = document.createElement("button");
       selectBtn.className = `todo-btn select-btn${todo.id === state.selectedTodoId ? " active" : ""}`;
-      selectBtn.setAttribute("aria-label", "현재 작업으로 선택");
+      selectBtn.setAttribute("aria-label", t("selectAsCurrent"));
       selectBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>`;
       selectBtn.addEventListener("click", () => selectTodo(todo.id));
       actions.appendChild(selectBtn);
@@ -446,7 +632,7 @@ function renderTodos() {
 
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "todo-btn delete-btn";
-    deleteBtn.setAttribute("aria-label", "삭제");
+    deleteBtn.setAttribute("aria-label", t("deleteTodo"));
     deleteBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
     deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
 
@@ -457,8 +643,7 @@ function renderTodos() {
     els.todoList.appendChild(li);
   });
 
-  const remaining = state.todos.filter((t) => !t.completed).length;
-  const completed = state.todos.filter((t) => t.completed).length;
+  const completed = state.todos.filter((item) => item.completed).length;
   els.todoFooter.hidden = completed === 0;
 
   updateProgressMini();
@@ -475,15 +660,11 @@ function setFilter(filter) {
 }
 
 function init() {
-  const today = new Date();
-  const dateStr = formatDate(today);
-  els.headerDate.textContent = dateStr;
-  els.todoDate.textContent = today.toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
-
+  loadPrefs();
+  applyTheme();
   buildDial();
   loadTodos();
-  renderTodos();
-  updateTimerUI();
+  applyLanguage();
 
   els.modeTabs.forEach((tab) => {
     tab.addEventListener("click", () => setMode(tab.dataset.mode));
@@ -495,6 +676,8 @@ function init() {
 
   els.startBtn.addEventListener("click", startTimer);
   els.resetBtn.addEventListener("click", resetTimer);
+  els.langBtn.addEventListener("click", toggleLanguage);
+  els.themeBtn.addEventListener("click", toggleTheme);
 
   els.todoForm.addEventListener("submit", (e) => {
     e.preventDefault();

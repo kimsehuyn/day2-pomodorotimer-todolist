@@ -1,34 +1,52 @@
 :root {
-  --bg: #eef2f7;
-  --bg-card: #ffffff;
-  --bg-subtle: #f7f9fc;
-  --border: #e4eaf2;
-  --text: #1a2332;
-  --text-secondary: #5c6b82;
-  --text-muted: #8b9bb5;
-  --primary: #3b82f6;
-  --primary-soft: #eff6ff;
-  --primary-hover: #2563eb;
-  --timer-red: #e60000;
-  --timer-red-soft: rgba(230, 0, 0, 0.08);
-  --break-green: #22c55e;
-  --break-soft: rgba(34, 197, 94, 0.1);
-  --long-break-blue: #3b82f6;
-  --long-break-soft: rgba(59, 130, 246, 0.1);
-  --star: #f59e0b;
-  --danger: #ef4444;
-  --shadow-sm: 0 2px 8px rgba(26, 35, 50, 0.06);
-  --shadow-md: 0 8px 24px rgba(26, 35, 50, 0.08);
-  --shadow-timer: 0 12px 40px rgba(26, 35, 50, 0.12), 0 2px 8px rgba(26, 35, 50, 0.06);
+  --bg: #f2eef6;
+  --bg-card: #fffcfe;
+  --bg-subtle: #f7f3f9;
+  --border: #e6dde9;
+  --text: #3d3548;
+  --text-secondary: #7a7189;
+  --text-muted: #a89eb0;
+  --primary: #9aa8d4;
+  --primary-soft: #eef0f8;
+  --primary-hover: #8494c4;
+  --timer-red: #e8a0a8;
+  --timer-red-soft: rgba(232, 160, 168, 0.18);
+  --break-green: #a8c9b5;
+  --break-soft: rgba(168, 201, 181, 0.2);
+  --long-break-blue: #a3b8d9;
+  --long-break-soft: rgba(163, 184, 217, 0.2);
+  --star: #e8c4a0;
+  --danger: #d4a0a8;
+  --shadow-sm: 0 2px 10px rgba(90, 70, 100, 0.05);
+  --shadow-md: 0 10px 28px rgba(90, 70, 100, 0.07);
+  --shadow-timer: 0 14px 40px rgba(90, 70, 100, 0.1), 0 2px 8px rgba(90, 70, 100, 0.05);
   --radius: 20px;
   --radius-sm: 12px;
   --font: "Noto Sans KR", system-ui, sans-serif;
   --font-display: "Outfit", "Noto Sans KR", sans-serif;
   --transition: 0.2s ease;
-  --cat-work: #3b82f6;
-  --cat-study: #8b5cf6;
-  --cat-life: #22c55e;
-  --cat-personal: #f59e0b;
+  --cat-work: #9aa8d4;
+  --cat-study: #c4a8d4;
+  --cat-life: #a8c9b5;
+  --cat-personal: #e8c4a0;
+  --dial-bg: #fffcfe;
+  --dial-border: #f0e8ef;
+  --dial-stroke: #eadfe8;
+  --dial-tick: #6b6178;
+  --dial-tick-minor: #9a90a5;
+  --dial-number: #4a4158;
+  --knob-bg: linear-gradient(145deg, #fffcfe, #f3ecf4);
+  --knob-shadow: 0 4px 14px rgba(90, 70, 100, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+  --knob-shadow-hover: 0 6px 18px rgba(90, 70, 100, 0.12), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+  --starred-bg: #fbf5ec;
+  --cat-study-bg: #f4eef8;
+  --cat-study-text: #9a7fb0;
+  --cat-life-bg: #eef6f1;
+  --cat-life-text: #6f9a82;
+  --cat-personal-bg: #faf3ea;
+  --cat-personal-text: #c4a07a;
+  --danger-soft: #f8eef0;
+  --hover-border: #d8cfe0;
 }
 
 *,
@@ -45,6 +63,10 @@ body {
   color: var(--text);
   min-height: 100vh;
   line-height: 1.5;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(232, 160, 168, 0.22), transparent),
+    radial-gradient(ellipse 60% 45% at 90% 10%, rgba(163, 184, 217, 0.2), transparent),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(168, 201, 181, 0.15), transparent);
 }
 
 .app {
@@ -58,8 +80,48 @@ body {
 
 /* Header */
 .header {
+  position: relative;
   text-align: center;
   margin-bottom: 2rem;
+}
+
+.header-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 36px;
+  padding: 0 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+
+.ctrl-btn:hover {
+  color: var(--text);
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+#themeBtnIcon {
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .header-date {
@@ -81,6 +143,14 @@ body {
   color: var(--text-secondary);
   font-size: 0.9rem;
   margin-top: 0.2rem;
+}
+
+@media (max-width: 480px) {
+  .header-controls {
+    position: static;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
 }
 
 /* Layout */
@@ -159,10 +229,10 @@ body.mode-longBreak .mode-tab.active {
   position: relative;
   width: min(100%, 300px);
   aspect-ratio: 1;
-  background: #ffffff;
+  background: var(--dial-bg);
   border-radius: 36px;
   box-shadow: var(--shadow-timer);
-  border: 3px solid #f0f0f0;
+  border: 3px solid var(--dial-border);
   padding: 14px;
 }
 
@@ -172,13 +242,13 @@ body.mode-longBreak .mode-tab.active {
 }
 
 .dial-face {
-  fill: #ffffff;
-  stroke: #ebebeb;
+  fill: var(--dial-bg);
+  stroke: var(--dial-stroke);
   stroke-width: 1;
 }
 
 .dial-tick {
-  stroke: #1a1a1a;
+  stroke: var(--dial-tick);
   stroke-linecap: round;
 }
 
@@ -188,19 +258,19 @@ body.mode-longBreak .mode-tab.active {
 
 .dial-tick.minor {
   stroke-width: 1;
-  stroke: #333;
+  stroke: var(--dial-tick-minor);
 }
 
 .dial-tick.dot {
   stroke-width: 0;
-  fill: #ccc;
+  fill: var(--dial-tick-minor);
 }
 
 .dial-number {
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
-  fill: #111;
+  fill: var(--dial-number);
   text-anchor: middle;
   dominant-baseline: central;
 }
@@ -226,11 +296,9 @@ body.mode-longBreak .time-wedge {
   width: 42%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: linear-gradient(145deg, #ffffff, #f0f0f0);
-  border: 2px solid #e8e8e8;
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.1),
-    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+  background: var(--knob-bg);
+  border: 2px solid var(--dial-stroke);
+  box-shadow: var(--knob-shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -244,9 +312,7 @@ body.mode-longBreak .time-wedge {
 
 .center-knob:hover {
   transform: translate(-50%, -50%) scale(1.03);
-  box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.12),
-    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+  box-shadow: var(--knob-shadow-hover);
 }
 
 .center-knob:active {
@@ -257,21 +323,21 @@ body.mode-longBreak .time-wedge {
   border-color: var(--timer-red);
   box-shadow:
     0 0 0 4px var(--timer-red-soft),
-    0 4px 12px rgba(230, 0, 0, 0.15);
+    0 4px 14px rgba(232, 160, 168, 0.28);
 }
 
 body.mode-shortBreak .center-knob.running {
   border-color: var(--break-green);
   box-shadow:
     0 0 0 4px var(--break-soft),
-    0 4px 12px rgba(34, 197, 94, 0.15);
+    0 4px 14px rgba(168, 201, 181, 0.28);
 }
 
 body.mode-longBreak .center-knob.running {
   border-color: var(--long-break-blue);
   box-shadow:
     0 0 0 4px var(--long-break-soft),
-    0 4px 12px rgba(59, 130, 246, 0.15);
+    0 4px 14px rgba(163, 184, 217, 0.28);
 }
 
 .knob-time {
@@ -279,7 +345,7 @@ body.mode-longBreak .center-knob.running {
   font-size: clamp(1.4rem, 4vw, 1.75rem);
   font-weight: 700;
   line-height: 1;
-  color: #111;
+  color: var(--text);
 }
 
 .knob-label {
@@ -557,7 +623,7 @@ body.mode-longBreak .knob-action {
 }
 
 .todo-list:empty::after {
-  content: "할 일이 없습니다 ✨";
+  content: attr(data-empty);
   display: block;
   text-align: center;
   color: var(--text-muted);
@@ -589,7 +655,7 @@ body.mode-longBreak .knob-action {
 
 .todo-item:hover {
   box-shadow: var(--shadow-sm);
-  border-color: #d0dae8;
+  border-color: var(--hover-border);
 }
 
 .todo-item.completed {
@@ -605,11 +671,11 @@ body.mode-longBreak .knob-action {
 .todo-item.selected {
   border-color: var(--primary);
   background: var(--primary-soft);
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 1px rgba(154, 168, 212, 0.35);
 }
 
 .todo-item.starred {
-  background: #fffbeb;
+  background: var(--starred-bg);
 }
 
 .todo-check {
@@ -674,18 +740,18 @@ body.mode-longBreak .knob-action {
 }
 
 .todo-item[data-category="study"] .todo-category {
-  background: #f3e8ff;
-  color: var(--cat-study);
+  background: var(--cat-study-bg);
+  color: var(--cat-study-text);
 }
 
 .todo-item[data-category="life"] .todo-category {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--cat-life-bg);
+  color: var(--cat-life-text);
 }
 
 .todo-item[data-category="personal"] .todo-category {
-  background: #fef3c7;
-  color: #d97706;
+  background: var(--cat-personal-bg);
+  color: var(--cat-personal-text);
 }
 
 .todo-pomodoros {
@@ -730,7 +796,7 @@ body.mode-longBreak .knob-action {
 
 .todo-btn.delete-btn:hover {
   color: var(--danger);
-  background: #fef2f2;
+  background: var(--danger-soft);
 }
 
 .todo-footer {
@@ -769,4 +835,58 @@ body.mode-longBreak .knob-action {
 @keyframes timerPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.02); }
+}
+
+/* Dark theme — pastel on deep lavender charcoal */
+html[data-theme="dark"] {
+  --bg: #1c1824;
+  --bg-card: #262131;
+  --bg-subtle: #2f293c;
+  --border: #3d354d;
+  --text: #f0eaf4;
+  --text-secondary: #c4b8d0;
+  --text-muted: #9589a8;
+  --primary: #b0bbe0;
+  --primary-soft: rgba(176, 187, 224, 0.16);
+  --primary-hover: #c4cceb;
+  --timer-red: #f0b4ba;
+  --timer-red-soft: rgba(240, 180, 186, 0.22);
+  --break-green: #b8dcc8;
+  --break-soft: rgba(184, 220, 200, 0.22);
+  --long-break-blue: #b5c6e4;
+  --long-break-soft: rgba(181, 198, 228, 0.22);
+  --star: #f0d0a8;
+  --danger: #e8b0b8;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-timer: 0 14px 40px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --cat-work: #b0bbe0;
+  --cat-study: #d0b8e0;
+  --cat-life: #b8dcc8;
+  --cat-personal: #f0d0a8;
+  --dial-bg: #2a2436;
+  --dial-border: #3d354d;
+  --dial-stroke: #4a4158;
+  --dial-tick: #c4b8d0;
+  --dial-tick-minor: #8a7e9c;
+  --dial-number: #e8e0ef;
+  --knob-bg: linear-gradient(145deg, #322b40, #262131);
+  --knob-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.06);
+  --knob-shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.08);
+  --starred-bg: rgba(240, 208, 168, 0.1);
+  --cat-study-bg: rgba(208, 184, 224, 0.16);
+  --cat-study-text: #d0b8e0;
+  --cat-life-bg: rgba(184, 220, 200, 0.16);
+  --cat-life-text: #b8dcc8;
+  --cat-personal-bg: rgba(240, 208, 168, 0.16);
+  --cat-personal-text: #f0d0a8;
+  --danger-soft: rgba(232, 176, 184, 0.14);
+  --hover-border: #5a5068;
+}
+
+html[data-theme="dark"] body {
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(240, 180, 186, 0.12), transparent),
+    radial-gradient(ellipse 60% 45% at 90% 10%, rgba(181, 198, 228, 0.12), transparent),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(184, 220, 200, 0.08), transparent);
 }
